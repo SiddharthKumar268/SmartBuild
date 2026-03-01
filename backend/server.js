@@ -13,7 +13,17 @@ const io     = new Server(server, { cors: { origin: '*' } });
 app.use(cors());
 app.use(bodyParser.json());
 // ─── FIX: use absolute path so frontend loads on Render ──────────────
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '../frontend'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    } else if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filePath.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html');
+    }
+  }
+}));
 
 // ─── FIX: read ML_URL from environment variable ──────────────────────
 // On Render → set ML_URL = https://smartbuild-ml.onrender.com
