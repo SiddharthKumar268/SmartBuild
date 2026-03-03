@@ -100,6 +100,17 @@ except Exception as e:
     print(f"==> risk_predictor not available: {e}", flush=True)
 
 # ─── ROUTES ──────────────────────────────────────────────────────────
+@app.route('/', methods=['GET'])          # ← NEW: this is the only addition
+def root():
+    return jsonify({
+        'status': 'ok',
+        'service': 'SmartBuild ML Server',
+        'models': {
+            'cost':  cost_model  is not None,
+            'delay': delay_model is not None
+        }
+    })
+    
 @app.route('/generate-design', methods=['POST'])
 def optimize_design():
     data = request.json
@@ -180,3 +191,4 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print(f"==> Starting on port {port}", flush=True)
     app.run(host='0.0.0.0', port=port, debug=False)
+
